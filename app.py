@@ -18,8 +18,25 @@ city = st.sidebar.selectbox("City", ["dortmund", "bochum", "duesseldorf"])
 kwp_min = st.sidebar.number_input("Min kWp", value=50)
 kwp_max = st.sidebar.number_input("Max kWp", value=1000)
 
-tilt_min = st.sidebar.number_input("Tilt Min (°)", value=0)
-tilt_max = st.sidebar.number_input("Tilt Max (°)", value=50)
+# 🔥 Optimal tilt checkbox FIRST
+optimal_tilt = st.sidebar.checkbox("Optimal Tilt (25–40° or flat)", True)
+
+# 🔥 Tilt inputs (disabled when optimal_tilt = True)
+tilt_min = st.sidebar.number_input(
+    "Tilt Min (°)",
+    value=0,
+    disabled=optimal_tilt
+)
+
+tilt_max = st.sidebar.number_input(
+    "Tilt Max (°)",
+    value=50,
+    disabled=optimal_tilt
+)
+
+# UX hint
+if optimal_tilt:
+    st.sidebar.info("Using optimal tilt automatically")
 
 area_min = st.sidebar.number_input("Min Area", value=500)
 area_max = st.sidebar.number_input("Max Area", value=5000)
@@ -37,10 +54,9 @@ landuse = st.sidebar.multiselect(
 
 require_transformer = st.sidebar.checkbox("Require Transformer", True)
 roof_orientation = st.sidebar.checkbox("South/West", True)
-optimal_tilt = st.sidebar.checkbox("Optimal Tilt", True)
 
 # -------------------------
-# MAIN AREA (ALWAYS VISIBLE)
+# MAIN AREA
 # -------------------------
 st.info("👉 Select filters and click Search")
 
@@ -48,12 +64,13 @@ search = st.button("🔍 Search")
 
 if search:
 
+    # 🔥 IMPORTANT: avoid sending tilt when optimal_tilt is True
     payload = {
         "city": city,
         "kwp_min": kwp_min,
         "kwp_max": kwp_max,
-        "tilt_min": tilt_min,
-        "tilt_max": tilt_max,
+        "tilt_min": None if optimal_tilt else tilt_min,
+        "tilt_max": None if optimal_tilt else tilt_max,
         "area_min": area_min,
         "area_max": area_max,
         "distance_max": distance_max,
@@ -74,14 +91,23 @@ if search:
             else:
                 result = response.json()
 
-                if result["count"] == 0:
+                if not result.get("success", True):
+                    st.error(result.get("error", "Unknown error"))
+                elif result.get("count", 0) == 0:
                     st.warning("No results found")
                 else:
                     df = pd.DataFrame(result["data"])
 
                     st.success(f"{result['count']} buildings found")
 
+                    # Optional: limit columns display
                     st.dataframe(df)
 
+        except requests.exceptions.Timeout:
+            st.error("Request timed out. API is slow or unreachable.")
+
+        except requests.exceptions.ConnectionError:
+            st.error("Cannot connect to API. Check server IP and port.")
+
         except Exception as e:
-            st.error(f"Connection error: {e}")
+            st.error(f"Unexpected error: {e}")
