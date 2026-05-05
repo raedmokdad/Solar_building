@@ -13,6 +13,14 @@ st.title("☀️ Solar Building Finder")
 # -------------------------
 st.sidebar.header("Filters")
 
+limit = st.sidebar.number_input(
+    "Max Results",
+    min_value=1,
+    max_value=5000,
+    value=1000,
+    step=100
+)
+
 city = st.sidebar.selectbox("City", ["dortmund", "bochum", "duesseldorf"])
 
 kwp_min = st.sidebar.number_input("Min kWp", value=50)
@@ -66,6 +74,7 @@ if search:
 
     # 🔥 IMPORTANT: avoid sending tilt when optimal_tilt is True
     payload = {
+        "limit": limit,
         "city": city,
         "kwp_min": kwp_min,
         "kwp_max": kwp_max,
