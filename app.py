@@ -129,7 +129,7 @@ limit = st.sidebar.number_input(
 )
 
 
-city = st.sidebar.selectbox("City", ["dortmund", "bochum", "duesseldorf"])
+city = st.sidebar.selectbox("City", ["dortmund", "bochum", "duesseldorf", "essen", "koeln"])
 
 kwp_min = st.sidebar.number_input("Min kWp", value=50)
 kwp_max = st.sidebar.number_input("Max kWp", value=1000)
