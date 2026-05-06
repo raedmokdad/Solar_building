@@ -4,30 +4,46 @@ import pandas as pd
 import os
 
 # -------------------------
-# PASSWORD PROTECTION
+# PAGE CONFIG
+# -------------------------
+st.set_page_config(page_title="Login", layout="centered")
+
+# -------------------------
+# LOGIN FUNCTION
 # -------------------------
 def check_password():
+
     def password_entered():
         if st.session_state["password"] == os.getenv("APP_PASSWORD"):
             st.session_state["password_correct"] = True
-            del st.session_state["password"]
         else:
             st.session_state["password_correct"] = False
 
-    if "password_correct" not in st.session_state:
-        st.text_input("🔒 Enter password", type="password", on_change=password_entered, key="password")
-        return False
+    # Centered layout
+    col1, col2, col3 = st.columns([1, 2, 1])
 
-    elif not st.session_state["password_correct"]:
-        st.text_input("🔒 Enter password", type="password", on_change=password_entered, key="password")
-        st.error("❌ Incorrect password")
-        return False
+    with col2:
+        st.markdown("## 🔐 Secure Access")
+        st.markdown("Enter password to continue")
 
-    else:
-        return True
+        st.text_input(
+            "Password",
+            type="password",
+            on_change=password_entered,
+            key="password",
+            placeholder="Enter your password"
+        )
+
+        if "password_correct" in st.session_state:
+            if not st.session_state["password_correct"]:
+                st.error("❌ Incorrect password")
+
+    return st.session_state.get("password_correct", False)
 
 
-# STOP app if not authenticated
+# -------------------------
+# STOP APP IF NOT AUTH
+# -------------------------
 if not check_password():
     st.stop()
 
