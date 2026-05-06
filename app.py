@@ -3,23 +3,25 @@ import requests
 import pandas as pd
 import os
 
-# -------------------------
-# PAGE CONFIG
-# -------------------------
 st.set_page_config(page_title="Login", layout="centered")
 
-# -------------------------
-# LOGIN FUNCTION
-# -------------------------
+
 def check_password():
 
     def password_entered():
         if st.session_state["password"] == os.getenv("APP_PASSWORD"):
             st.session_state["password_correct"] = True
+            del st.session_state["password"]  # 🔥 remove input after success
         else:
             st.session_state["password_correct"] = False
 
-    # Centered layout
+    # If already logged in → skip UI completely
+    if st.session_state.get("password_correct", False):
+        return True
+
+    # -------------------------
+    # SHOW LOGIN UI
+    # -------------------------
     col1, col2, col3 = st.columns([1, 2, 1])
 
     with col2:
@@ -38,12 +40,10 @@ def check_password():
             if not st.session_state["password_correct"]:
                 st.error("❌ Incorrect password")
 
-    return st.session_state.get("password_correct", False)
+    return False
 
 
-# -------------------------
-# STOP APP IF NOT AUTH
-# -------------------------
+# STOP app if not authenticated
 if not check_password():
     st.stop()
 
