@@ -4,96 +4,57 @@ import pandas as pd
 import os
 
 # -------------------------
-# PAGE CONFIG (important for UI)
+# SESSION STATE INIT
 # -------------------------
-st.set_page_config(
-    page_title="Solar Finder Login",
-    page_icon="🔐",
-    layout="centered"
-)
+if "password_correct" not in st.session_state:
+    st.session_state.password_correct = False
+
 
 # -------------------------
-# CUSTOM STYLE (clean login card)
-# -------------------------
-st.markdown("""
-<style>
-    .login-box {
-        max-width: 400px;
-        margin: auto;
-        padding: 2rem;
-        border-radius: 16px;
-        background-color: #0e1117;
-        box-shadow: 0px 0px 15px rgba(255,255,255,0.08);
-        text-align: center;
-    }
-
-    .title {
-        font-size: 28px;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
-
-    .subtitle {
-        font-size: 14px;
-        color: gray;
-        margin-bottom: 20px;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# -------------------------
-# LOGIN LOGIC
+# LOGIN FUNCTION
 # -------------------------
 def check_password():
 
     def password_entered():
         if st.session_state["password"] == os.getenv("APP_PASSWORD"):
             st.session_state["password_correct"] = True
+            del st.session_state["password"]
         else:
             st.session_state["password_correct"] = False
 
-    # INIT STATE
-    if "password_correct" not in st.session_state:
-        st.session_state["password_correct"] = False
-
-    # -------------------------
-    # LOGIN SUCCESS
-    # -------------------------
-    if st.session_state["password_correct"]:
+    if st.session_state.password_correct:
         return True
 
-    # -------------------------
-    # LOGIN UI
-    # -------------------------
-    st.markdown('<div class="login-box">', unsafe_allow_html=True)
-
-    st.markdown('<div class="title">☀️ Solar Finder</div>', unsafe_allow_html=True)
-    st.markdown('<div class="subtitle">Enter password to access system</div>', unsafe_allow_html=True)
-
+    # CENTERED LOGIN ONLY
+    st.markdown("## 🔐 Secure Access")
     st.text_input(
         "Password",
         type="password",
         on_change=password_entered,
-        key="password"
+        key="password",
     )
 
-    if "password" in st.session_state and not st.session_state["password_correct"]:
+    if "password_correct" in st.session_state and not st.session_state.password_correct:
         st.error("❌ Incorrect password")
-
-    st.markdown('</div>', unsafe_allow_html=True)
 
     return False
 
 
 # -------------------------
-# BLOCK APP
+# AUTH CHECK FIRST
 # -------------------------
 if not check_password():
     st.stop()
 
+
+# -------------------------
+# AFTER LOGIN → SWITCH TO WIDE LAYOUT
+# -------------------------
+st.set_page_config(page_title="Solar Finder", layout="wide")
+
 API_URL = "http://65.108.42.157:8000/buildings/filter"
 
-st.set_page_config(page_title="Solar Finder", layout="wide")
+
 
 st.title("☀️ Solar Building Finder")
 
