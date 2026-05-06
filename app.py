@@ -3,49 +3,6 @@ import requests
 import pandas as pd
 import os
 
-st.set_page_config(page_title="Login", layout="centered")
-
-
-def check_password():
-
-    def password_entered():
-        if st.session_state["password"] == os.getenv("APP_PASSWORD"):
-            st.session_state["password_correct"] = True
-            del st.session_state["password"]  # 🔥 remove input after success
-        else:
-            st.session_state["password_correct"] = False
-
-    # If already logged in → skip UI completely
-    if st.session_state.get("password_correct", False):
-        return True
-
-    # -------------------------
-    # SHOW LOGIN UI
-    # -------------------------
-    col1, col2, col3 = st.columns([1, 2, 1])
-
-    with col2:
-        st.markdown("## 🔐 Secure Access")
-        st.markdown("Enter password to continue")
-
-        st.text_input(
-            "Password",
-            type="password",
-            on_change=password_entered,
-            key="password",
-            placeholder="Enter your password"
-        )
-
-        if "password_correct" in st.session_state:
-            if not st.session_state["password_correct"]:
-                st.error("❌ Incorrect password")
-
-    return False
-
-
-# STOP app if not authenticated
-if not check_password():
-    st.stop()
 
 API_URL = "http://65.108.42.157:8000/buildings/filter"
 
