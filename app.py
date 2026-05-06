@@ -9,6 +9,9 @@ import os
 if "password_correct" not in st.session_state:
     st.session_state.password_correct = False
 
+if "login_attempted" not in st.session_state:
+    st.session_state.login_attempted = False
+
 
 # -------------------------
 # LOGIN FUNCTION
@@ -16,17 +19,23 @@ if "password_correct" not in st.session_state:
 def check_password():
 
     def password_entered():
+        st.session_state.login_attempted = True  # 🔥 user tried login
+
         if st.session_state["password"] == os.getenv("APP_PASSWORD"):
             st.session_state["password_correct"] = True
             del st.session_state["password"]
         else:
             st.session_state["password_correct"] = False
 
+    # already logged in → skip login UI
     if st.session_state.password_correct:
         return True
 
-    # CENTERED LOGIN ONLY
+    # -------------------------
+    # LOGIN UI
+    # -------------------------
     st.markdown("## 🔐 Secure Access")
+
     st.text_input(
         "Password",
         type="password",
@@ -34,7 +43,8 @@ def check_password():
         key="password",
     )
 
-    if "password_correct" in st.session_state and not st.session_state.password_correct:
+    # 🔥 show error ONLY after first attempt
+    if st.session_state.login_attempted and not st.session_state.password_correct:
         st.error("❌ Incorrect password")
 
     return False
@@ -48,7 +58,7 @@ if not check_password():
 
 
 # -------------------------
-# AFTER LOGIN → SWITCH TO WIDE LAYOUT
+# AFTER LOGIN → APP
 # -------------------------
 st.set_page_config(page_title="Solar Finder", layout="wide")
 
