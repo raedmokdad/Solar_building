@@ -143,7 +143,7 @@ if search:
 
     with st.spinner("Calling API..."):
         try:
-            response = requests.post(API_URL, json=payload, timeout=10)
+            response = requests.post(API_URL, json=payload, timeout=120)
 
             if response.status_code != 200:
                 st.error(f"API error: {response.text}")
