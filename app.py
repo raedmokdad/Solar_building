@@ -65,7 +65,7 @@ st.sidebar.header("Filters")
 limit = st.sidebar.number_input(
     "Max Results",
     min_value=1,
-    max_value=5000,
+    max_value=1000000,
     value=1000,
     step=100
 )
