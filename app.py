@@ -8,6 +8,53 @@ st.set_page_config(page_title="Solar Finder", layout="wide")
 
 st.title("☀️ Solar Building Finder")
 
+with st.expander("ℹ️ Filter Explanation"):
+    st.markdown("""
+    ### 🔍 Filter Guide
+    
+    Use the filters in the sidebar to find the most suitable buildings for solar installation.
+    
+    #### ⚡ Power & Size
+    - **kWp (kilowatt peak)**: Installed solar capacity of the building  
+      → Higher = more solar panels / higher production  
+    - **Building Area (m²)**: Roof size  
+      → Larger roofs = more installation space  
+    
+    #### 🌞 Solar Performance
+    - **Radiation (kWh/m²/year)**: Solar energy received  
+      → Higher = better sunlight conditions  
+    - **Annual Yield (kWh/year)**: Estimated yearly electricity production  
+      → Based on installed capacity and efficiency  
+    
+    #### 📐 Roof Characteristics
+    - **Tilt (°)**: Roof angle  
+      → Optimal: 25°–40°  
+      → Flat roofs (0°–10°) are also acceptable  
+    - **Optimal Tilt (Auto Mode)**:  
+      → If enabled, system automatically selects best tilt ranges  
+      → If disabled, you can manually set min/max tilt  
+    
+    - **Orientation (South/West)**:  
+      → South-facing roofs are best  
+      → West is also acceptable  
+    
+    #### ⚡ Grid Connection
+    - **Distance to Transformer (m)**:  
+      → Shorter distance = easier and cheaper connection  
+    - **Require Transformer**:  
+      → Only include buildings with known grid access  
+    
+    #### 🏭 Land Use
+    - **Land Use Type**:  
+      → Commercial / Industrial buildings are prioritized  
+      → Typically larger and more suitable for solar  
+    
+    #### 🎯 Tip
+    Combine filters carefully:
+    - Start broad → then narrow down
+    - Too many strict filters = no results
+    """)
+
 # -------------------------
 # SIDEBAR
 # -------------------------
